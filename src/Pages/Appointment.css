@@ -1,0 +1,129 @@
+body,html{
+    height: 100%;
+    margin: 0;
+    /* background: linear-gradient(
+        rgba(255, 255, 255, 0.5),
+        rgba(255, 255, 255, 0.5)
+      ),
+      url(""),
+        center;
+    background-size: cover;
+    background-repeat: no-repeat; */
+}
+
+/* .whole{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 7%;
+} */
+
+.box{
+   
+
+    width: 20%;
+    height: 60px;
+    margin-top: 10%;
+}
+/* .contacttable{
+    display: grid;
+    grid-template-columns: 30% 50%;
+}
+.whole h1{
+    text-align: center;
+    font-weight: 800;
+    font-size: 35px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+} */
+
+/* form{
+    padding: 30px;
+}
+
+form label{
+    font-size: 15px;
+    font-weight: 800;
+    background-color:transparent;
+    color: black;
+    padding: 10px;   
+} */
+
+/* .personalinfo input,textarea{
+    font-size: 10px;
+    background-color:white;
+    color: black;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid white;
+    width: 70%;
+    height: 20px;
+    margin: 10px;
+    margin-top: 10px;
+} */
+/* .carinfo select,input,textarea{
+    font-size: 10px;
+    background-color:white;
+    color: black;
+    text-align: center;
+    border-radius: 10px;
+    border: 2px solid white;
+    width: 100%;
+    height: 20px;
+    margin: 10px;
+   
+    margin-left: 30px;
+} */
+
+/* .submitbtn{
+    color: black;
+    background-color: transparent;
+    font-size: 17px;
+    font-weight: 600;
+    border: 2px solid black;
+    border-radius: 2px;
+    padding: 10px;
+    padding-left: 6%;
+    padding-right: 6%;
+    margin-top: 6%;
+    
+} */
+/* .submitbtn:hover{
+    color:white;
+    background-color: black;
+    font-size: 17px;
+    font-weight: 600;
+    border: 2px solid black;
+    border-radius: 2px;
+    padding: 10px;
+    padding-left: 6%;
+    padding-right: 6%;
+    margin-top: 6%;
+} */
+.selected-date {
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .date {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .time-slots {
+    margin-top: 10px;
+  }
+  
+  .time-slots button {
+    margin: 5px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .time-slots button:hover {
+    background-color: #0056b3;
+  }
