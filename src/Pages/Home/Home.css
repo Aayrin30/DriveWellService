@@ -181,7 +181,7 @@ body h1{
 }
 
 .imageclass1, .imageclass2, .imageclass3 {
-  margin: 10px;
+  margin: 10px auto;
   text-align: center;
 }
 
