@@ -33,6 +33,7 @@
     margin: 20px 10px 10px 0px;
     padding: 10px;
     border: 1px solid black;
+    text-transform: none !important;
   }
   .button {
     width: 40%;
