@@ -1,14 +1,13 @@
 .btn {
-  padding: 10px 40px;
-  margin: 20px 3px;
-  background: #1d263b;
+  padding: 10px 25px;
+  margin: 25px 3px;
+  background: black;
   color: white;
   cursor: pointer;
-  transition: .2s ease-in;
   font-size: 18px;
 }
 
 .btn:hover {
   color: white;
-  background-color: #496A96;
+  background: #f56642;
 }

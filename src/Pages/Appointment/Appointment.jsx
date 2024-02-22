@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { ScheduleMeeting } from "react-schedule-meeting";
-import { format } from "date-fns";
+import { formatISO } from "date-fns";
+import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
+import { toastAction } from "../../utils/toastAction";
 export default function Appointment() {
-  const companies = [
-    {
-      name: "Company A",
-      models: ["Model A1", "Model A2", "Model A3"],
-    },
-    {
-      name: "Company B",
-      models: ["Model B1", "Model B2", "Model B3"],
-    },
-  ];
+  const { user } = useContext(AuthContext);
+  const [companies, setCompanies] = useState([]);
+  const [models, setModels] = useState([]);
+  const [services, setServices] = useState([]);
   const [formData, setFormData] = useState({
     companySelect: "",
     vehicleNumber: "",
@@ -24,47 +21,73 @@ export default function Appointment() {
     address: "",
     city: "",
     pinCode: "",
+    appointmentDate: "",
   });
-  const handleSubmit = (e) => {
+
+  useEffect(() => {
+    const fetchCompany = async () => {
+      try {
+        const res = await axios.get("/company");
+        if (res.data) setCompanies(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const fetchService = async () => {
+      try {
+        const res = await axios.get("/service");
+        if (res.data) setServices(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCompany();
+    fetchService();
+  }, []);
+
+  useEffect(() => {
+    const fetchModel = async () => {
+      try {
+        const res = await axios.get(`/model/${formData.companySelect}`);
+        if (res.data) setModels(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (formData.companySelect !== "") fetchModel();
+  }, [formData.companySelect]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    setFormData({
-      companySelect: "",
-      vehicleNumber: "",
-      modelSelect: "",
-      services: [],
-      instruction: "",
-      firstName: "",
-      lastName: "",
-      phoneNumber: "",
-      address: "",
-      city: "",
-      pinCode: "",
-    });
+    try {
+      const res = await axios.post(`/appointment`, {
+        ...formData,
+        userId: user.id,
+      });
+      toastAction.success(res.data.message)
+      if (res.data) setFormData(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    // For checkbox inputs, toggle selected services
+    
     if (type === "checkbox") {
-      // Copy the previous services array
       const updatedServices = [...formData.services];
       if (checked) {
-        // Add the selected service
         updatedServices.push(value);
       } else {
-        // Remove the deselected service
         const index = updatedServices.indexOf(value);
         if (index > -1) {
           updatedServices.splice(index, 1);
         }
       }
-      // Update the state with the new services array
       setFormData((prevFormData) => ({
         ...prevFormData,
         services: updatedServices,
       }));
     } else {
-      // For other inputs, update the corresponding field in formData
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: value,
@@ -90,23 +113,12 @@ export default function Appointment() {
     })
     .filter((timeslot) => timeslot !== null);
   const handleTimeslotClicked = (startTimeEventEmit) => {
-    startTimeEventEmit.resetDate();
-    startTimeEventEmit.resetSelectedTimeState();
-    alert(
-      `Time selected: ${format(
-        startTimeEventEmit.startTime,
-        "hh:mm:ss b dd/LL/yyyy"
-      )}`
-    );
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      appointmentDate: formatISO(startTimeEventEmit.startTime),
+    }));
   };
-  const typeOfService = [
-    "CAR WASHING",
-    "CAR PAINTING",
-    "ENGINE DIAGNOSTICS",
-    "CAR DENTING",
-    "LUBE,OIL & FILTERS",
-    "BREAK REPAIR & WHEEL SERVICES",
-  ];
+
   return (
     <div className="w-[95%] bg-[#F5F5F5] p-20 m-20 mt-52 z-[-10] text-[18px] ">
       <h1 className="text-[30px] font-bold text-center">
@@ -165,7 +177,7 @@ export default function Appointment() {
                   >
                     <option value="">Select Company</option>
                     {companies.map((company, index) => (
-                      <option key={index} value={company.name}>
+                      <option key={index} value={company.id}>
                         {company.name}
                       </option>
                     ))}
@@ -186,13 +198,9 @@ export default function Appointment() {
                     className="disabled:opacity-60 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-white  disabled:cursor-not-allowed"
                   >
                     <option value="">Select Model</option>
-                    {(
-                      companies.find(
-                        (company) => company.name === formData.companySelect
-                      )?.models || []
-                    ).map((model, index) => (
-                      <option key={index} value={model}>
-                        {model}
+                    {models.map((model, index) => (
+                      <option key={index} value={model.id}>
+                        {model.name}
                       </option>
                     ))}
                   </select>
@@ -200,20 +208,20 @@ export default function Appointment() {
               </div>
               <div className="">
                 <h2 className="text-[20px] font-bold mb-2">Type of Services</h2>
-                {typeOfService.map((service, index) => (
+                {services.map((service, index) => (
                   <div key={index} className="flex gap-2 items-center mb-2">
                     <input
                       type="checkbox"
                       name="services"
                       className="h-[18px] w-[18px]"
-                      value={service}
+                      value={service.id}
                       onChange={handleChange}
                     />
                     <label
                       htmlFor="services"
                       className="text-[18px] font-bold "
                     >
-                      {service}
+                      {service.name}
                     </label>
                   </div>
                 ))}
@@ -227,7 +235,7 @@ export default function Appointment() {
                 name="instruction"
                 onChange={handleChange}
                 value={formData.instruction}
-                className="w-full rounded-[10px] p-4 resize-none"
+                className="w-full rounded-[10px] p-4 resize-none normal-case"
                 rows="6"
               />
             </div>
