@@ -24,6 +24,7 @@ const Login = () => {
         navigate("/");
       }, 3000);
     } catch (err) {
+      toastAction.error(err.response.data.errors);
       dispatch({ type: "LOGIN_FAIL", payload: err.response.data });
     }
   };

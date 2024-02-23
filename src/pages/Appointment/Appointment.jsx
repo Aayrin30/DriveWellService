@@ -4,6 +4,7 @@ import { formatISO } from "date-fns";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { toastAction } from "../../utils/toastAction";
+import { useNavigate } from "react-router-dom";
 export default function Appointment() {
   const { user } = useContext(AuthContext);
   const [companies, setCompanies] = useState([]);
@@ -23,6 +24,7 @@ export default function Appointment() {
     pinCode: "",
     appointmentDate: "",
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -64,15 +66,21 @@ export default function Appointment() {
         ...formData,
         userId: user.id,
       });
-      toastAction.success(res.data.message)
-      if (res.data) setFormData(res.data);
+      if (res.status === 201) {
+        toastAction.success(res.data.message);
+        if (res.data) setFormData(res.data);
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+      }
     } catch (error) {
+      toastAction.error(error.response.data.errors);
       console.log(error);
     }
   };
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (type === "checkbox") {
       const updatedServices = [...formData.services];
       if (checked) {
@@ -94,9 +102,6 @@ export default function Appointment() {
       }));
     }
   };
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
   const availableTimeslots = [0, 1, 2, 3, 4, 5]
     .map((id) => {
       const currentDate = new Date();
@@ -159,7 +164,6 @@ export default function Appointment() {
                     value={formData.vehicleNumber}
                     onChange={handleChange}
                     className="text-[18px] w-[100%] bg-white rounded-md text-[gray] h-[30px] focus:border-[2px] focus:border-black pl-2 "
-                    required
                   />
                 </div>
                 <div className="flex flex-col gap-2 ml-6">
@@ -258,7 +262,6 @@ export default function Appointment() {
                     onChange={handleChange}
                     value={formData.firstName}
                     className="text-[18px] w-[100%] bg-white rounded-md text-[gray] h-[30px] focus:border-[2px] focus:border-black pl-2 "
-                    required
                   />
                 </div>
                 <div className="w-[50%] flex flex-col gap-2 ml-6">
@@ -274,7 +277,6 @@ export default function Appointment() {
                     onChange={handleChange}
                     value={formData.lastName}
                     className="text-[18px] w-[100%] bg-white rounded-md text-[gray] h-[30px] focus:border-[2px] focus:border-black pl-2 "
-                    required
                   />
                 </div>
               </div>
@@ -291,7 +293,6 @@ export default function Appointment() {
                     onChange={handleChange}
                     value={formData.phoneNumber}
                     name="phoneNumber"
-                    required
                   />
                 </div>
                 <div className="flex flex-col gap-2 ml-6 mb-4">
@@ -307,7 +308,6 @@ export default function Appointment() {
                     value={formData.address}
                     onChange={handleChange}
                     className="text-[18px] w-[100%] bg-white rounded-md text-[gray] h-[30px] focus:border-[2px] focus:border-black pl-2 "
-                    required
                   />
                 </div>
               </div>
@@ -325,7 +325,6 @@ export default function Appointment() {
                     onChange={handleChange}
                     value={formData.city}
                     className="text-[18px] w-[100%] bg-white rounded-md text-[gray] h-[30px] focus:border-[2px] focus:border-black pl-2 "
-                    required
                   />
                 </div>
                 <div className="w-[50%] flex flex-col gap-2 ml-6">
@@ -341,7 +340,6 @@ export default function Appointment() {
                     onChange={handleChange}
                     value={formData.pinCode}
                     className="text-[18px] w-[100%] bg-white rounded-md text-[gray] h-[30px] focus:border-[2px] focus:border-black pl-2 "
-                    required
                   />
                 </div>
               </div>
