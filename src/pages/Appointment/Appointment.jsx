@@ -10,6 +10,7 @@ export default function Appointment() {
   const [companies, setCompanies] = useState([]);
   const [models, setModels] = useState([]);
   const [services, setServices] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [formData, setFormData] = useState({
     companySelect: "",
     vehicleNumber: "",
@@ -59,12 +60,31 @@ export default function Appointment() {
     if (formData.companySelect !== "") fetchModel();
   }, [formData.companySelect]);
 
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        if (formData.modelSelect !== "" && formData.services.length !== 0) {
+          const res = await axios.get(`/price/${formData.modelSelect}`, {
+            params: {
+              selectedServices: formData.services,
+            },
+          });
+          if (res.status === 200) setTotalPrice(res.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPrice();
+  }, [formData.modelSelect, formData.services]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post(`/appointment`, {
         ...formData,
         userId: user.id,
+        totalPrice:totalPrice
       });
       if (res.status === 201) {
         toastAction.success(res.data.message);
@@ -345,9 +365,12 @@ export default function Appointment() {
               </div>
             </div>
             <hr className="h-px my-8 bg-black border-2 " />
-            <button className="block mx-auto btn h-[50px] w-[180px]">
-              Book Now
-            </button>
+            <div className="flex items-center gap-8">
+              <button className="block mx-auto btn h-[50px] w-[180px]">
+                Book Now
+              </button>
+              <span className="text-5xl">₹ {totalPrice}</span>
+            </div>
           </form>
         </div>
       </div>
